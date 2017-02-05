@@ -26,8 +26,8 @@ Basic.prototype.verify = function (creds, cb) {
         if (!row.salt) return cb('NOSALT', 'integrity error: no salt found');
         if (!row.hash) return cb('NOHASH', 'integrity error: no hash found');
         
-        var pw = Buffer(creds.password);
-        var salt = Buffer(row.salt, 'hex');
+        var pw = Buffer.from(creds.password);
+        var salt = Buffer.from(row.salt, 'hex');
         
         var h = shasum(Buffer.concat([ salt, pw ]));
         cb(null, h === row.hash, row.id);
@@ -39,7 +39,7 @@ Basic.prototype.create = function (id, creds) {
     if (err) return err;
     
     var salt = crypto.randomBytes(16);
-    var pw = Buffer(creds.password);
+    var pw = Buffer.from(creds.password);
     
     return [
         {
@@ -64,7 +64,7 @@ Basic.prototype._checkCreds = function (creds) {
     if (pw === undefined) {
         return new Error('password required');
     }
-    if (typeof pw === 'string') pw = Buffer(pw);
+    if (typeof pw === 'string') pw = Buffer.from(pw);
     if (!Buffer.isBuffer(pw)) {
         return new Error('password must be a string or buffer');
     }
